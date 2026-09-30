@@ -1,0 +1,37 @@
+<?php
+
+return [
+    'accepted' => '请勾选:attribute。',
+    'alpha_dash' => ':attribute只能包含字母、数字和连字符。',
+    'array' => ':attribute必须是列表。',
+    'email' => ':attribute必须是有效的电子邮箱地址。',
+    'enum' => '所选的:attribute无效。',
+    'exists' => '所选的:attribute无效。',
+    'extensions' => ':attribute必须是以下格式之一：:values。',
+    'file' => ':attribute必须是文件。',
+    'in' => '所选的:attribute无效。',
+    'integer' => ':attribute必须是整数。',
+    'max' => [
+        'array' => ':attribute不能超过:max项。',
+        'file' => ':attribute不能大于:max KB。',
+        'numeric' => ':attribute不能大于:max。',
+        'string' => ':attribute不能超过:max个字符。',
+    ],
+    'mimes' => ':attribute必须是以下类型的文件：:values。',
+    'mimetypes' => ':attribute的文件类型不被允许。',
+    'min' => [
+        'array' => ':attribute至少需要:min项。',
+        'file' => ':attribute不能小于:min KB。',
+        'numeric' => ':attribute不能小于:min。',
+        'string' => ':attribute至少需要:min个字符。',
+    ],
+    'numeric' => ':attribute必须是数字。',
+    'regex' => ':attribute格式不正确。',
+    'required' => ':attribute为必填项。',
+    'size' => ['string' => ':attribute必须为:size个字符。'],
+    'string' => ':attribute必须是文本。',
+    'unique' => ':attribute已被使用。',
+    'uploaded' => ':attribute上传失败。',
+    'url' => ':attribute必须是有效的网址。',
+    'attributes' => [],
+];

@@ -1,0 +1,7 @@
+/*
+ * Noto Sans SC — loaded on the Chinese version only (§7.5).
+ * Fontsource splits the font into unicode-range subsets, so the browser only
+ * downloads the glyphs actually displayed instead of several megabytes.
+ */
+@import '@fontsource/noto-sans-sc/400.css';
+@import '@fontsource/noto-sans-sc/700.css';

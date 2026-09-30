@@ -1,0 +1,37 @@
+<?php
+
+return [
+    'accepted' => 'Le champ :attribute doit être accepté.',
+    'alpha_dash' => 'Le champ :attribute ne peut contenir que des lettres, chiffres et tirets.',
+    'array' => 'Le champ :attribute doit être une liste.',
+    'email' => 'Le champ :attribute doit être une adresse email valide.',
+    'enum' => 'La valeur sélectionnée pour :attribute est invalide.',
+    'exists' => 'La valeur sélectionnée pour :attribute est invalide.',
+    'extensions' => 'Le champ :attribute doit avoir l’une des extensions suivantes : :values.',
+    'file' => 'Le champ :attribute doit être un fichier.',
+    'in' => 'La valeur sélectionnée pour :attribute est invalide.',
+    'integer' => 'Le champ :attribute doit être un nombre entier.',
+    'max' => [
+        'array' => 'Le champ :attribute ne peut pas contenir plus de :max éléments.',
+        'file' => 'Le fichier :attribute ne peut pas dépasser :max kilo-octets.',
+        'numeric' => 'Le champ :attribute ne peut pas être supérieur à :max.',
+        'string' => 'Le champ :attribute ne peut pas dépasser :max caractères.',
+    ],
+    'mimes' => 'Le champ :attribute doit être un fichier de type : :values.',
+    'mimetypes' => 'Le type de fichier de :attribute n’est pas autorisé.',
+    'min' => [
+        'array' => 'Le champ :attribute doit contenir au moins :min éléments.',
+        'file' => 'Le fichier :attribute doit faire au moins :min kilo-octets.',
+        'numeric' => 'Le champ :attribute doit être supérieur ou égal à :min.',
+        'string' => 'Le champ :attribute doit contenir au moins :min caractères.',
+    ],
+    'numeric' => 'Le champ :attribute doit être un nombre.',
+    'regex' => 'Le format du champ :attribute est invalide.',
+    'required' => 'Le champ :attribute est obligatoire.',
+    'size' => ['string' => 'Le champ :attribute doit contenir :size caractères.'],
+    'string' => 'Le champ :attribute doit être une chaîne de caractères.',
+    'unique' => 'La valeur du champ :attribute est déjà utilisée.',
+    'uploaded' => 'Le fichier :attribute n’a pas pu être téléversé.',
+    'url' => 'Le champ :attribute doit être une URL valide.',
+    'attributes' => [],
+];
