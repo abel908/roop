@@ -54,6 +54,9 @@ return [
         'description_max' => (int) env('SUBMISSION_DESCRIPTION_MAX', 3000),
         // Optional ClamAV binary for antivirus scanning ("clamdscan" or "clamscan").
         'antivirus_binary' => env('ANTIVIRUS_BINARY'),
+        // Or a clamd daemon reachable over TCP (Docker "clamav" service).
+        'clamd_host' => env('CLAMD_HOST'),
+        'clamd_port' => (int) env('CLAMD_PORT', 3310),
     ],
 
     /*
@@ -78,12 +81,33 @@ return [
     ],
 
     /*
+    | First Super Admin created by `php artisan site:install`.
+    */
+    'seed_demo' => (bool) env('SEED_DEMO', true),
+
+    'admin' => [
+        'name' => env('ADMIN_NAME', 'Super Admin'),
+        'email' => env('ADMIN_EMAIL'),
+        'password' => env('ADMIN_PASSWORD'),
+    ],
+
+    /*
     | Encrypted daily backups (§11.1) — 30 rolling days.
     */
     'backup' => [
         'path' => env('BACKUP_PATH', storage_path('backups')),
         'password' => env('BACKUP_PASSWORD'),
         'keep_days' => (int) env('BACKUP_KEEP_DAYS', 30),
+    ],
+
+    /*
+    | IndexNow: new and updated pages are notified to search engines (§10.1).
+    | The key is derived from APP_KEY when INDEXNOW_KEY is not set.
+    */
+    'indexnow' => [
+        'key' => env('INDEXNOW_KEY'),
+        'enabled' => (bool) env('INDEXNOW_ENABLED', env('APP_ENV') === 'production'),
+        'endpoint' => env('INDEXNOW_ENDPOINT', 'https://api.indexnow.org/indexnow'),
     ],
 
     'analytics' => [

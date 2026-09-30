@@ -30,3 +30,19 @@ jobs:
       - run: cp .env.example .env && php artisan key:generate
       - run: ./vendor/bin/pint --test
       - run: php artisan test
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the production image
+        working-directory: invest-in-africa-website
+        run: docker build -f docker/Dockerfile -t invest-in-africa-website:ci .
+      - name: Check PHP extensions (GD with WebP / AVIF, intl, MySQL)
+        run: |
+          docker run --rm --entrypoint php invest-in-africa-website:ci -r '
+            foreach (["intl","gd","pdo_mysql","zip","pcntl","exif","bcmath"] as $e) { extension_loaded($e) || exit("missing $e\n"); }
+            $gd = gd_info(); ($gd["WebP Support"] && $gd["AVIF Support"]) || exit("GD without WebP/AVIF\n");
+            echo "extensions OK\n";'
+      - name: Validate the Caddy configuration
+        run: docker run --rm -e SERVER_NAME=example.org --entrypoint frankenphp invest-in-africa-website:ci validate --config /etc/frankenphp/Caddyfile

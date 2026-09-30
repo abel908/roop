@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\AutoTranslates;
 use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -9,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Sector extends Model
 {
-    use HasTranslations;
+    use AutoTranslates, HasTranslations;
 
     protected array $translatable = ['name'];
 

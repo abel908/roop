@@ -69,5 +69,5 @@ return [
         'submit' => 'Envoyer ma manifestation d’intérêt',
         'mobile_cta' => 'Manifester mon intérêt',
     ],
-    'disclaimer' => 'Les informations présentées ne constituent ni une offre de titres financiers, ni un conseil en investissement. Toute décision d’investissement relève de la seule responsabilité de l’investisseur, qui doit procéder à sa propre analyse. Texte définitif : à valider par The Invest In Africa Initiative.',
+    'disclaimer' => 'Les informations présentées ne constituent ni une offre de titres financiers, ni un conseil en investissement. Toute décision d’investissement relève de la seule responsabilité de l’investisseur, qui doit procéder à sa propre analyse.',
 ];

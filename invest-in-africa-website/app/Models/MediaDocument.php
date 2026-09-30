@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\AutoTranslates;
 use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /** Public guides and brochures (§5.4 "Documents téléchargeables"). */
 class MediaDocument extends Model
 {
-    use HasTranslations;
+    use AutoTranslates, HasTranslations;
 
     protected array $translatable = ['title'];
 

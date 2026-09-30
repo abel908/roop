@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\AutoTranslates;
 use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
 
 class SeoMeta extends Model
 {
-    use HasTranslations;
+    use AutoTranslates, HasTranslations;
 
     protected array $translatable = ['title', 'description'];
 

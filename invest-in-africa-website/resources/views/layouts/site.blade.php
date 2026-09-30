@@ -52,6 +52,12 @@
     <link rel="apple-touch-icon" href="{{ asset('images/apple-touch-icon.png') }}">
     <meta name="theme-color" content="#000000">
     <meta name="format-detection" content="telephone=no">
+    {{-- Search engine ownership verification (codes entered in the back-office settings) --}}
+    @foreach (['google' => 'google-site-verification', 'bing' => 'msvalidate.01', 'baidu' => 'baidu-site-verification', 'yandex' => 'yandex-verification'] as $engine => $meta)
+        @if ($code = data_get($settings, "search.$engine"))
+            <meta name="{{ $meta }}" content="{{ $code }}">
+        @endif
+    @endforeach
     @if (config('site.analytics.ga4_id'))
         <meta name="ga4-id" content="{{ config('site.analytics.ga4_id') }}">
     @endif

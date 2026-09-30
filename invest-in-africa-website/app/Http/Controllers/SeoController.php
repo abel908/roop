@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Domain;
 use App\Models\Page;
 use App\Models\Project;
+use App\Services\IndexNow;
 use App\Support\Locales;
 use Illuminate\Http\Response;
 
@@ -81,6 +82,14 @@ class SeoController
             : ['User-agent: *', 'Disallow: /'];
 
         return response(implode("\n", $lines)."\n", 200, ['Content-Type' => 'text/plain']);
+    }
+
+    /** IndexNow key file proving ownership of the host. */
+    public function indexNowKey(string $key): Response
+    {
+        abort_unless(hash_equals(IndexNow::key(), $key), 404);
+
+        return response($key, 200, ['Content-Type' => 'text/plain']);
     }
 
     /** @return array<string, string> */

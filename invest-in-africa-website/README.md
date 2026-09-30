@@ -9,26 +9,33 @@ Site trilingue **English · Français · 中文** réalisé selon le cahier des 
 
 ---
 
-## Démarrage rapide
+## Mise en ligne : une seule commande
+
+Sur un serveur Linux avec Docker, le nom de domaine pointant vers ce serveur :
 
 ```bash
-composer install
-npm install && npm run build
-cp .env.example .env && php artisan key:generate
-touch database/database.sqlite
-ADMIN_EMAIL=vous@domaine.org ADMIN_PASSWORD='MotDePasse-Solide-2026' php artisan migrate --seed
-php artisan storage:link
-php artisan content:sync      # rend tous les textes du site éditables dans le back-office
-php artisan serve             # http://localhost:8000  —  back-office : /admin
+git clone <dépôt> && cd <dépôt>/invest-in-africa-website
+./start.sh invest-in-africa.org contact@invest-in-africa.org
 ```
 
-En local et en préproduction, le seeder ajoute 6 **projets de démonstration** (préfixés « [Demo] »).
-Ils ne sont jamais créés en production (`SEED_DEMO=false`).
+Tout est automatique : secrets générés (`.env.docker`), certificat HTTPS Let's Encrypt obtenu et renouvelé,
+base MySQL, Redis, file d'attente (emails, images), planificateur (sauvegardes chiffrées, conservation des données,
+IndexNow), antivirus ClamAV, migrations, données de référence, premier Super Admin (identifiants affichés à la fin),
+textes éditables, variantes AVIF/WebP, caches. Relancer `./start.sh` met le site à jour sans perdre aucun contenu.
+Avec les secrets `DEPLOY_*` du dépôt GitHub, chaque push sur `main` validé par les tests est déployé automatiquement
+(`.github/workflows/website-deploy.yml`).
 
-Tests : `php artisan test` (72 tests : pages ×3 langues, hreflang, filtres, formulaires,
-uploads, anti-spam et captcha, limitation d'envoi, redirections, en-têtes de sécurité, matrice des rôles,
-verrouillage de compte, documents confidentiels, surcharge des textes, pages par blocs, aperçu,
-historique des versions, menus, images AVIF/WebP, conservation des données). Style : `./vendor/bin/pint`.
+Réglages facultatifs dans `.env.docker` : compte SMTP d'envoi des emails (`MAIL_*`, sinon ils sont journalisés),
+`ANTHROPIC_API_KEY` (traduction automatique des langues manquantes), `GA4_MEASUREMENT_ID`.
+
+## Développement local
+
+```bash
+composer install && npm install && npm run build
+cp .env.example .env && php artisan key:generate && touch database/database.sqlite
+php artisan site:install      # base, données, Super Admin (identifiants dans storage/app/private/first-admin.txt)
+php artisan serve             # http://localhost:8000  —  back-office : /admin
+```
 
 ---
 
@@ -95,6 +102,18 @@ Aucun contenu institutionnel n'a été inventé. Les éléments suivants sont vi
 - Photographies et vidéo institutionnelles : sans visuel, le hero affiche le motif graphique des rayons du logo.
 
 ---
+
+## Automatisations
+
+| Besoin | Automatisme |
+|--------|-------------|
+| Langues manquantes | Traduction par Claude après chaque enregistrement (projets, pages, domaines, partenaires, textes, paramètres) ; rien n'est écrasé ; journalisé pour relecture ; désactivable dans *Paramètres* |
+| Référencement technique | Sitemaps par langue avec hreflang, robots.txt, balises de vérification (Google, Bing, Baidu, Yandex) saisies dans *Paramètres*, notification IndexNow à chaque publication et chaque semaine |
+| Images | Conversion AVIF / WebP en plusieurs largeurs à l'import |
+| Sauvegardes | Archive chiffrée chaque nuit, 30 jours (mot de passe généré ; `php artisan site:backup --show-password`) |
+| Données personnelles | Anonymisation automatique après les durées de conservation |
+| Pages légales | Textes complets, alimentés par les paramètres (coordonnées, hébergeur, durées de conservation) |
+| Déploiement | `./start.sh` ou déploiement GitHub automatique ; migrations et mises à jour non destructives |
 
 ## Documentation livrée (§14.6)
 

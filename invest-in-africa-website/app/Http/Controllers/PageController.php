@@ -7,6 +7,7 @@ use App\Models\Domain;
 use App\Models\Partner;
 use App\Models\Project;
 use App\Models\Setting;
+use App\Services\DataRetention;
 use App\Support\Seo;
 use Illuminate\Contracts\View\View;
 
@@ -83,6 +84,40 @@ class PageController
     {
         $this->seo->page($page)->crumb(__("legal.$page.title"));
 
-        return view('pages.legal', ['page' => $page]);
+        return view('pages.legal', ['page' => $page, 'replace' => $this->legalReplacements()]);
+    }
+
+    /**
+     * Values of the legal pages, taken from the site settings so the texts
+     * are always complete and up to date (§3.4).
+     *
+     * @return array<string, string>
+     */
+    private function legalReplacements(): array
+    {
+        $contact = Setting::get('contact', []);
+        $legal = Setting::get('legal', []);
+        $name = e(config('site.name'));
+
+        $publisher = collect([$name, e($legal['registration'] ?? ''), e(str_replace("\n", ', ', trim($contact['address'] ?? '')))])
+            ->filter()->implode(', ');
+
+        $channels = collect([
+            ! empty($contact['email']) ? '<a href="mailto:'.e($contact['email']).'">'.e($contact['email']).'</a>' : null,
+            ! empty($contact['phone']) ? '<a href="tel:'.e(preg_replace('/[^0-9+]/', '', $contact['phone'])).'">'.e($contact['phone']).'</a>' : null,
+            '<a href="'.e(lroute('contact')).'">'.e(__('site.nav.contact')).'</a>',
+        ])->filter()->implode(' · ');
+
+        $retention = collect(DataRetention::DEFAULTS)->except('activity_logs')
+            ->map(fn ($default, $type) => __("legal_retention.$type", ['months' => DataRetention::months($type)]))
+            ->implode(' ; ');
+
+        return [
+            'publisher' => $publisher,
+            'director' => e($legal['director'] ?? '') ?: __('legal_retention.director_default', ['name' => $name]),
+            'contact' => $channels,
+            'host' => nl2br(e($legal['host'] ?? '')) ?: __('legal_retention.host_default', ['name' => $name]),
+            'retention' => $retention,
+        ];
     }
 }

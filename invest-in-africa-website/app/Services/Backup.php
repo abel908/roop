@@ -19,6 +19,22 @@ class Backup
 {
     public function __construct(private readonly ?string $directory = null) {}
 
+    /**
+     * Archive password: BACKUP_PASSWORD when set, otherwise derived from
+     * APP_KEY so backups are always encrypted without manual configuration
+     * (`php artisan site:backup --show-password` displays it).
+     */
+    public static function password(): string
+    {
+        $key = (string) config('app.key');
+
+        if (! config('site.backup.password') && $key === '') {
+            throw new RuntimeException('APP_KEY is missing: backups cannot be encrypted.');
+        }
+
+        return config('site.backup.password') ?: substr(hash_hmac('sha256', 'site-backup', $key), 0, 40);
+    }
+
     public function directory(): string
     {
         return $this->directory ?? config('site.backup.path');
@@ -26,11 +42,7 @@ class Backup
 
     public function run(): string
     {
-        $password = config('site.backup.password');
-
-        if (! $password) {
-            throw new RuntimeException('BACKUP_PASSWORD must be set: backups are always encrypted.');
-        }
+        $password = self::password();
 
         File::ensureDirectoryExists($this->directory());
         $archive = $this->directory().'/backup-'.now()->format('Y-m-d-His').'.zip';

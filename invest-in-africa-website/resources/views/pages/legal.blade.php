@@ -18,8 +18,7 @@
                 </ul>
             </nav>
             <article class="prose-site lg:col-span-8 lg:col-start-5">
-                <x-alert type="info">{{ __('legal.draft_notice') }}</x-alert>
-                {!! __('legal.'.$page.'.body') !!}
+                {!! __('legal.'.$page.'.body', $replace) !!}
             </article>
         </div>
     </section>

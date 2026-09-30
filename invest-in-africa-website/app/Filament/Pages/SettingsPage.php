@@ -3,9 +3,11 @@
 namespace App\Filament\Pages;
 
 use App\Jobs\OptimizeImage;
+use App\Jobs\TranslateMissingLanguages;
 use App\Models\ActivityLog;
 use App\Models\Setting;
 use App\Services\ImageOptimizer;
+use App\Services\Translator;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -79,6 +81,10 @@ abstract class SettingsPage extends Page
                 OptimizeImage::dispatch($value);
             }
         });
+
+        if (Translator::enabled()) {
+            TranslateMissingLanguages::dispatch(settingKeys: $this->settingKeys());
+        }
 
         ActivityLog::record('settings.updated', null, ['keys' => implode(', ', $this->settingKeys())]);
 

@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    // Automatic translation of missing languages (EN / FR / 中文).
+    'anthropic' => [
+        'key' => env('ANTHROPIC_API_KEY'),
+        'model' => env('TRANSLATION_MODEL', 'claude-opus-5-5'),
+    ],
+
 ];

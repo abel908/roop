@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\PartnerCategory;
+use App\Models\Concerns\AutoTranslates;
 use App\Models\Concerns\HasRevisions;
 use App\Models\Concerns\HasTranslations;
 use App\Models\Concerns\OptimizesImages;
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\Storage;
 
 class Partner extends Model
 {
-    use HasRevisions, HasTranslations, OptimizesImages;
+    use AutoTranslates, HasRevisions, HasTranslations, OptimizesImages;
 
     protected array $translatable = ['description'];
 

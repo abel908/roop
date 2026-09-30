@@ -23,6 +23,7 @@ Route::get('/', RootController::class)->name('root');
 Route::get('sitemap.xml', [SeoController::class, 'sitemapIndex'])->name('sitemap');
 Route::get('sitemap-{locale}.xml', [SeoController::class, 'sitemap'])->whereIn('locale', Locales::codes())->name('sitemap.locale');
 Route::get('robots.txt', [SeoController::class, 'robots'])->name('robots');
+Route::get('{key}.txt', [SeoController::class, 'indexNowKey'])->where('key', '[a-zA-Z0-9-]{8,128}')->name('indexnow.key');
 
 // Preview of a draft page from the back-office (§8.1).
 Route::get('preview/pages/{page}/{locale}', [CmsPageController::class, 'preview'])

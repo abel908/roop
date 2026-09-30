@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use App\Jobs\TranslateMissingLanguages;
+use App\Models\Concerns\AutoTranslates;
 use App\Models\Concerns\HasRevisions;
 use App\Models\Concerns\HasTranslations;
+use App\Models\Concerns\NotifiesSearchEngines;
 use App\Models\Concerns\OptimizesImages;
 use App\Support\Locales;
 use Illuminate\Database\Eloquent\Builder;
@@ -16,7 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Domain extends Model
 {
-    use HasRevisions, HasTranslations, OptimizesImages;
+    use AutoTranslates, HasRevisions, HasTranslations, NotifiesSearchEngines, OptimizesImages;
 
     protected array $translatable = ['slug', 'title', 'tagline', 'audience', 'intro', 'challenges', 'services', 'benefits', 'steps'];
 
@@ -64,5 +67,16 @@ class Domain extends Model
     public function numberLabel(): string
     {
         return str_pad((string) $this->number, 2, '0', STR_PAD_LEFT);
+    }
+
+    /** Missing URL slugs: French from the French title, Chinese in Latin characters (§7.4). */
+    public function completeSlugs(): void
+    {
+        $this->slug = TranslateMissingLanguages::slugsFor((array) $this->slug, (array) $this->title);
+    }
+
+    public function isPubliclyVisible(): bool
+    {
+        return (bool) $this->is_published;
     }
 }

@@ -30,7 +30,7 @@ class SectorSeeder extends Seeder
         $sort = 0;
 
         foreach ($sectors as $code => [$en, $fr, $zh]) {
-            Sector::query()->updateOrCreate(['code' => $code], [
+            Sector::query()->firstOrCreate(['code' => $code], [
                 'name' => compact('en', 'fr', 'zh'),
                 'sort' => $sort += 10,
                 'is_active' => true,

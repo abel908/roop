@@ -16,7 +16,7 @@ class DomainSeeder extends Seeder
     public function run(): void
     {
         foreach ($this->domains() as $domain) {
-            Domain::query()->updateOrCreate(['number' => $domain['number']], $domain);
+            Domain::query()->firstOrCreate(['number' => $domain['number']], $domain);
         }
     }
 

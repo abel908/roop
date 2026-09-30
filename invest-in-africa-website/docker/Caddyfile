@@ -1,0 +1,23 @@
+# Automatic HTTPS for {$SERVER_NAME} (certificate obtained and renewed by Caddy).
+{
+	frankenphp
+}
+
+{$SERVER_NAME:localhost} {
+	root * /app/public
+
+	# Brotli / Zstd / Gzip compression (§10.4)
+	encode zstd br gzip
+
+	# Fingerprinted assets and optimised images: long browser / CDN cache
+	@immutable path /build/* /storage/*/optimized/*
+	header @immutable Cache-Control "public, max-age=31536000, immutable"
+	@static path /images/* /storage/* /favicon.ico /css/filament/* /js/filament/* /fonts/filament/*
+	header @static Cache-Control "public, max-age=604800"
+
+	# Private files are never served
+	@private path /storage/app/* /.env* /.git*
+	respond @private 404
+
+	php_server
+}

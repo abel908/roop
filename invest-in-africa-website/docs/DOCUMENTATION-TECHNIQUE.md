@@ -60,6 +60,12 @@ Tests : `php artisan test` · Style PSR-12 : `./vendor/bin/pint`.
 
 ## 3. Production
 
+### Méthode recommandée : Docker (tout automatique)
+
+`./start.sh mon-domaine.org [email]` construit l'image (`docker/Dockerfile`, FrankenPHP = Caddy + PHP avec HTTPS automatique) et démarre `docker-compose.yml` : `app` (web), `worker` (file d'attente), `scheduler` (tâches planifiées), `mysql`, `redis`, `clamav`. Au démarrage, `docker/entrypoint.sh` génère la clé d'application si besoin, attend la base puis exécute `php artisan site:install` (idempotent). Les volumes `storage`, `mysql` et `caddy_data` conservent fichiers, base et certificats.
+
+### Installation manuelle (sans Docker)
+
 ### Serveur
 
 - Linux, Nginx, PHP-FPM 8.3+ (`intl`, `gd` avec WebP/AVIF, `pdo_mysql`, `redis`, `zip`), MySQL/MariaDB, Redis, certificat TLS.

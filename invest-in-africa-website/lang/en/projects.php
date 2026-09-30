@@ -69,5 +69,5 @@ return [
         'submit' => 'Send my expression of interest',
         'mobile_cta' => 'Express my interest',
     ],
-    'disclaimer' => 'The information presented constitutes neither an offer of financial securities nor investment advice. Any investment decision is the sole responsibility of the investor, who must carry out their own analysis. Final text: to be validated by The Invest In Africa Initiative.',
+    'disclaimer' => 'The information presented constitutes neither an offer of financial securities nor investment advice. Any investment decision is the sole responsibility of the investor, who must carry out their own analysis.',
 ];

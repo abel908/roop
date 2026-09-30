@@ -104,7 +104,7 @@ class DemoSeeder extends Seeder
         ];
 
         foreach ($projects as $data) {
-            Project::query()->updateOrCreate(['reference' => $data['reference']], [
+            Project::query()->firstOrCreate(['reference' => $data['reference']], [
                 'title' => $data['title'],
                 'summary' => $data['summary'],
                 'description' => [
@@ -150,7 +150,7 @@ class DemoSeeder extends Seeder
     {
         $t = fn (string $en, string $fr, string $zh) => compact('en', 'fr', 'zh');
 
-        Page::query()->updateOrCreate(['id' => 1], [
+        Page::query()->firstOrCreate(['id' => 1], [
             'title' => $t('[Demo] Diaspora investment guide', '[Démo] Guide d’investissement de la diaspora', '[示例] 侨民投资指南'),
             'slug' => $t('diaspora-investment-guide', 'guide-investissement-diaspora', 'diaspora-investment-guide'),
             'status' => Page::STATUS_PUBLISHED,

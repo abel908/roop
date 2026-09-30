@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Jobs\TranslateMissingLanguages;
 use App\Models\Concerns\HasRevisions;
+use App\Services\Translator;
 use App\Support\DatabaseTranslationLoader;
 use App\Support\Locales;
 use Illuminate\Database\Eloquent\Model;
@@ -25,7 +27,15 @@ class ContentTranslation extends Model
 
     protected static function booted(): void
     {
-        static::saved(fn (self $row) => static::flush($row->group));
+        static::saved(function (self $row) {
+            static::flush($row->group);
+
+            // An override written in one language is carried over to the others.
+            $filled = array_filter($row->only(['en', 'fr', 'zh']), fn ($v) => filled($v));
+            if ($filled && count($filled) < 3 && Translator::enabled()) {
+                TranslateMissingLanguages::dispatch(static::class, $row->id)->afterCommit();
+            }
+        });
         static::deleted(fn (self $row) => static::flush($row->group));
     }
 

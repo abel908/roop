@@ -6,9 +6,11 @@ use App\Enums\FundingType;
 use App\Enums\ProjectStage;
 use App\Enums\ProjectStatus;
 use App\Enums\Region;
+use App\Models\Concerns\AutoTranslates;
 use App\Models\Concerns\HasReference;
 use App\Models\Concerns\HasRevisions;
 use App\Models\Concerns\HasTranslations;
+use App\Models\Concerns\NotifiesSearchEngines;
 use App\Models\Concerns\OptimizesImages;
 use App\Support\Countries;
 use App\Support\Locales;
@@ -24,7 +26,7 @@ use Illuminate\Support\Facades\Storage;
  */
 class Project extends Model
 {
-    use HasReference, HasRevisions, HasTranslations, OptimizesImages;
+    use AutoTranslates, HasReference, HasRevisions, HasTranslations, NotifiesSearchEngines, OptimizesImages;
 
     protected array $translatable = ['title', 'summary', 'description', 'use_of_funds', 'impact', 'timeline'];
 
@@ -143,5 +145,10 @@ class Project extends Model
     public function isOpenForInterest(): bool
     {
         return in_array($this->status, [ProjectStatus::Open, ProjectStatus::Funding], true);
+    }
+
+    public function isPubliclyVisible(): bool
+    {
+        return $this->is_published && (! $this->published_at || $this->published_at->isPast());
     }
 }

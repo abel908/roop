@@ -3,8 +3,11 @@
 namespace App\Models;
 
 use App\Jobs\OptimizeImage;
+use App\Jobs\TranslateMissingLanguages;
+use App\Models\Concerns\AutoTranslates;
 use App\Models\Concerns\HasRevisions;
 use App\Models\Concerns\HasTranslations;
+use App\Models\Concerns\NotifiesSearchEngines;
 use App\Services\ImageOptimizer;
 use App\Support\Locales;
 use Illuminate\Database\Eloquent\Builder;
@@ -16,11 +19,14 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Page extends Model
 {
-    use HasRevisions, HasTranslations;
+    use AutoTranslates, HasRevisions, HasTranslations, NotifiesSearchEngines;
 
     public const STATUS_DRAFT = 'draft';
 
     public const STATUS_PUBLISHED = 'published';
+
+    /** Page blocks contain texts in the three languages too. */
+    protected array $autoTranslated = ['title', 'blocks', 'seo_title', 'seo_description'];
 
     protected array $translatable = ['title', 'slug', 'seo_title', 'seo_description'];
 
@@ -78,5 +84,16 @@ class Page extends Model
         return static::query()->live()->get()->first(
             fn (self $page) => $page->tr('slug', $locale) === $slug || $page->tr('slug', 'en') === $slug
         );
+    }
+
+    /** Missing URL slugs: French from the French title, Chinese in Latin characters (§7.4). */
+    public function completeSlugs(): void
+    {
+        $this->slug = TranslateMissingLanguages::slugsFor((array) $this->slug, (array) $this->title);
+    }
+
+    public function isPubliclyVisible(): bool
+    {
+        return $this->isLive();
     }
 }

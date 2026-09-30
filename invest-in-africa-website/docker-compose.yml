@@ -1,0 +1,84 @@
+# The Invest In Africa Initiative — production stack.
+# Start or update everything with:  ./start.sh your-domain.org
+name: invest-in-africa
+
+x-app: &app
+  image: invest-in-africa-website:latest
+  restart: unless-stopped
+  env_file: .env.docker
+  volumes:
+    - storage:/app/storage
+  depends_on:
+    mysql:
+      condition: service_healthy
+    redis:
+      condition: service_started
+
+services:
+  # Web: automatic HTTPS (Let's Encrypt), PHP, static files, compression
+  app:
+    <<: *app
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    environment:
+      CONTAINER_ROLE: app
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - storage:/app/storage
+      - caddy_data:/data
+      - caddy_config:/config
+
+  # Queue: transactional emails, image optimisation
+  worker:
+    <<: *app
+    environment:
+      CONTAINER_ROLE: worker
+    command: ["php", "artisan", "queue:work", "--tries=3", "--max-time=3600"]
+
+  # Scheduler: encrypted daily backups, data retention, cleanup
+  scheduler:
+    <<: *app
+    environment:
+      CONTAINER_ROLE: scheduler
+    command: ["php", "artisan", "schedule:work"]
+
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+    env_file: .env.docker
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
+    volumes:
+      - mysql:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u\"$$MYSQL_USER\" -p\"$$MYSQL_PASSWORD\" --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 60
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis:/data
+
+  # Antivirus for uploaded documents (§6.3, §11.1)
+  clamav:
+    image: clamav/clamav:stable
+    restart: unless-stopped
+    volumes:
+      - clamav:/var/lib/clamav
+
+volumes:
+  storage:
+  mysql:
+  redis:
+  clamav:
+  caddy_data:
+  caddy_config:

@@ -2,10 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Enums\Role;
-use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -18,24 +15,7 @@ class DatabaseSeeder extends Seeder
             MenuSeeder::class,
         ]);
 
-        // First Super Admin — credentials from the environment, never hard-coded.
-        $email = env('ADMIN_EMAIL', 'admin@example.com');
-
-        if (! User::query()->where('email', $email)->exists()) {
-            $password = env('ADMIN_PASSWORD') ?: Str::password(20);
-
-            User::query()->create([
-                'name' => env('ADMIN_NAME', 'Super Admin'),
-                'email' => $email,
-                'password' => $password,
-                'role' => Role::SuperAdmin,
-                'locale' => 'fr',
-            ]);
-
-            $this->command?->warn("Super Admin created: $email".(env('ADMIN_PASSWORD') ? '' : " / password: $password"));
-        }
-
-        if (app()->environment('local', 'staging', 'testing') && env('SEED_DEMO', true)) {
+        if (app()->environment('local', 'staging', 'testing') && config('site.seed_demo')) {
             $this->call(DemoSeeder::class);
         }
     }

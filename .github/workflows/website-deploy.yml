@@ -1,0 +1,41 @@
+name: website-deploy
+
+# Automatic deployment after every push on main, once the tests pass.
+# One-time setup — repository secrets: DEPLOY_HOST, DEPLOY_USER, DEPLOY_SSH_KEY,
+# DEPLOY_PATH (folder of the site on the server), DEPLOY_DOMAIN.
+# Without these secrets the workflow is skipped.
+
+on:
+  workflow_run:
+    workflows: [website]
+    types: [completed]
+    branches: [main]
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    concurrency: production
+    steps:
+      - name: Check configuration
+        id: check
+        env:
+          HOST: ${{ secrets.DEPLOY_HOST }}
+        run: echo "enabled=$([ -n "$HOST" ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+
+      - name: Deploy over SSH
+        if: steps.check.outputs.enabled == 'true'
+        env:
+          SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          HOST: ${{ secrets.DEPLOY_HOST }}
+          USER: ${{ secrets.DEPLOY_USER }}
+          TARGET: ${{ secrets.DEPLOY_PATH }}
+          DOMAIN: ${{ secrets.DEPLOY_DOMAIN }}
+          REPO: ${{ github.server_url }}/${{ github.repository }}.git
+          SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          install -m 600 /dev/null key && printf '%s\n' "$SSH_KEY" > key
+          ssh -i key -o StrictHostKeyChecking=accept-new "$USER@$HOST" "set -e
+            [ -d '$TARGET/.git' ] || git clone '$REPO' '$TARGET'
+            cd '$TARGET' && git fetch --prune origin && git checkout -q '$SHA'
+            cd invest-in-africa-website && ./start.sh '$DOMAIN'"

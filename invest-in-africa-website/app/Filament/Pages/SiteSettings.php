@@ -8,6 +8,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -27,7 +28,7 @@ class SiteSettings extends SettingsPage
 
     protected function settingKeys(): array
     {
-        return ['contact', 'socials', 'notifications', 'hero', 'retention'];
+        return ['contact', 'legal', 'socials', 'notifications', 'hero', 'retention', 'translation', 'search'];
     }
 
     public static function getNavigationGroup(): string|UnitEnum|null
@@ -59,6 +60,17 @@ class SiteSettings extends SettingsPage
                 TextInput::make('contact.lat')->label(__('admin.fields.latitude'))->numeric(),
                 TextInput::make('contact.lng')->label(__('admin.fields.longitude'))->numeric(),
             ]),
+            Section::make(__('admin.sections.legal'))->description(__('admin.help.legal'))->columns(2)->collapsed()->schema([
+                TextInput::make('legal.registration')->label(__('admin.fields.registration')),
+                TextInput::make('legal.director')->label(__('admin.fields.director')),
+                Textarea::make('legal.host')->label(__('admin.fields.host'))->rows(3)->columnSpanFull(),
+            ]),
+            Section::make(__('admin.sections.search'))->description(__('admin.help.search'))->columns(2)->collapsed()->schema([
+                TextInput::make('search.google')->label('Google Search Console'),
+                TextInput::make('search.bing')->label('Bing Webmaster Tools'),
+                TextInput::make('search.baidu')->label('Baidu 站长平台'),
+                TextInput::make('search.yandex')->label('Yandex Webmaster'),
+            ]),
             Section::make(__('admin.sections.socials'))->columns(3)->schema([
                 TextInput::make('socials.linkedin')->label('LinkedIn')->url(),
                 TextInput::make('socials.x')->label('X')->url(),
@@ -76,6 +88,11 @@ class SiteSettings extends SettingsPage
                 $emails('contact_press', __('admin.messages').' — '.__('enums.contact_subject.press')),
                 $emails('contact_other', __('admin.messages').' — '.__('enums.contact_subject.other')),
             ]),
+            Section::make(__('admin.sections.translation'))
+                ->description(fn () => filled(config('services.anthropic.key')) ? __('admin.help.translation') : __('admin.help.translation_no_key'))
+                ->schema([
+                    Toggle::make('translation.auto')->label(__('admin.fields.auto_translate'))->default(true),
+                ]),
             Section::make(__('admin.sections.retention'))->description(__('admin.help.retention'))->columns(4)->schema(
                 collect(DataRetention::DEFAULTS)->map(fn ($default, $type) => TextInput::make("retention.$type")
                     ->label(__("admin.retention.$type"))->numeric()->minValue(1)->maxValue(120)->suffix(__('admin.retention.months'))->placeholder((string) $default)

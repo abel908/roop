@@ -9,10 +9,12 @@ use App\Filament\Resources\ContentTranslations\ContentTranslationResource;
 use App\Filament\Resources\InterestExpressions\InterestExpressionResource;
 use App\Filament\Resources\Projects\ProjectResource;
 use App\Filament\Resources\Submissions\SubmissionResource;
+use App\Models\ActivityLog;
 use App\Models\ContactMessage;
 use App\Models\InterestExpression;
 use App\Models\Project;
 use App\Models\Submission;
+use App\Services\Translator;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
@@ -51,6 +53,13 @@ class StatsOverview extends StatsOverviewWidget
                 ->description(__('admin.dashboard.total', ['count' => ContactMessage::query()->count()]))
                 ->icon('heroicon-o-envelope')
                 ->url(ContactMessageResource::getUrl('index'));
+        }
+
+        if ($user->canManage('translations') && Translator::enabled()) {
+            $auto = ActivityLog::query()->where('action', 'translation.auto')->where('created_at', '>=', now()->subDays(30))->count();
+            $stats[] = Stat::make(__('admin.dashboard.auto_translations'), $auto)
+                ->description(__('admin.dashboard.auto_translations_help'))
+                ->icon('heroicon-o-sparkles');
         }
 
         if ($user->canManage('translations')) {

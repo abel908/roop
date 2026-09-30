@@ -33,3 +33,6 @@ Thumbs.db
 /public/css/filament
 /public/js/filament
 /public/fonts/filament
+
+# Docker production secrets
+/.env.docker

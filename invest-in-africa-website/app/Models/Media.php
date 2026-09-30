@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Jobs\OptimizeImage;
+use App\Models\Concerns\AutoTranslates;
 use App\Models\Concerns\HasTranslations;
 use App\Services\ImageOptimizer;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +15,7 @@ use Illuminate\Support\Facades\Storage;
  */
 class Media extends Model
 {
-    use HasTranslations;
+    use AutoTranslates, HasTranslations;
 
     protected $table = 'media';
 
