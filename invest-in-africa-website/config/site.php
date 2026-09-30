@@ -77,6 +77,15 @@ return [
         'southern' => ['BW', 'SZ', 'LS', 'MZ', 'NA', 'ZA', 'ZM', 'ZW'],
     ],
 
+    /*
+    | Encrypted daily backups (§11.1) — 30 rolling days.
+    */
+    'backup' => [
+        'path' => env('BACKUP_PATH', storage_path('backups')),
+        'password' => env('BACKUP_PASSWORD'),
+        'keep_days' => (int) env('BACKUP_KEEP_DAYS', 30),
+    ],
+
     'analytics' => [
         'ga4_id' => env('GA4_MEASUREMENT_ID'),
     ],

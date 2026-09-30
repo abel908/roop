@@ -2,6 +2,7 @@
 
 namespace App\Enums;
 
+use App\Models\Setting;
 use Filament\Support\Contracts\HasLabel;
 
 enum Role: string implements HasLabel
@@ -19,19 +20,39 @@ enum Role: string implements HasLabel
         return 'role';
     }
 
+    public const MODULES = ['pages', 'translations', 'media', 'projects', 'submissions', 'contact_messages', 'partners', 'seo', 'users', 'settings'];
+
     /**
-     * Permission matrix — cahier des charges §8.3.
-     * Modules: pages, translations, media, projects, submissions,
-     * contact_messages, partners, seo, users, settings.
+     * Default permission matrix — cahier des charges §8.3. It remains
+     * configurable after launch (back-office "Roles and permissions").
+     *
+     * @return array<int, string>
      */
-    public function canManage(string $module): bool
+    public function defaultModules(): array
     {
-        return in_array($module, match ($this) {
-            self::SuperAdmin => ['pages', 'translations', 'media', 'projects', 'submissions', 'contact_messages', 'partners', 'seo', 'users', 'settings'],
+        return match ($this) {
+            self::SuperAdmin => self::MODULES,
             self::Admin => ['pages', 'translations', 'media', 'projects', 'submissions', 'contact_messages', 'partners', 'seo', 'users'],
             self::Editor => ['pages', 'translations', 'media', 'partners', 'seo'],
             self::Translator => ['translations'],
             self::ProjectOfficer => ['media', 'projects', 'submissions', 'contact_messages'],
-        }, true);
+        };
+    }
+
+    /** @return array<int, string> */
+    public function modules(): array
+    {
+        if ($this === self::SuperAdmin) {
+            return self::MODULES; // never lockable
+        }
+
+        $custom = Setting::get('permissions.'.$this->value);
+
+        return is_array($custom) ? array_values(array_intersect($custom, self::MODULES)) : $this->defaultModules();
+    }
+
+    public function canManage(string $module): bool
+    {
+        return in_array($module, $this->modules(), true);
     }
 }

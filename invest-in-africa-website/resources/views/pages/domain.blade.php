@@ -4,7 +4,7 @@
     {{-- Header: official title, tagline, dedicated visual --}}
     <section class="on-dark grain relative overflow-hidden bg-ink text-paper">
         @if ($domain->cover_image)
-            <img src="{{ asset('storage/'.$domain->cover_image) }}" alt="" class="absolute inset-0 -z-0 size-full object-cover opacity-40" fetchpriority="high">
+            <x-picture :src="$domain->cover_image" eager class="absolute inset-0" img-class="size-full object-cover opacity-40" />
             <div class="absolute inset-0 bg-gradient-to-r from-ink via-ink/85 to-ink/30"></div>
         @else
             <x-rays class="absolute -right-[30rem] -bottom-[36rem] size-[66rem] opacity-30" :count="24" />

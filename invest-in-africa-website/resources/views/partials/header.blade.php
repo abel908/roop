@@ -1,11 +1,12 @@
 @php
-    $nav = [
-        ['page' => 'about', 'label' => __('site.nav.about')],
-        ['page' => 'mission', 'label' => __('site.nav.mission')],
-        ['page' => 'what-we-do', 'label' => __('site.nav.what_we_do'), 'mega' => 'domains', 'active' => ['what-we-do', 'domain']],
-        ['page' => 'get-involved', 'label' => __('site.nav.get_involved'), 'mega' => 'involved', 'active' => ['get-involved', 'invest', 'project', 'submit']],
-        ['page' => 'partners', 'label' => __('site.nav.partners')],
-        ['page' => 'contact', 'label' => __('site.nav.contact')],
+    // Main navigation, administrable per language in the back-office (§7.2, §8.1).
+    $nav = \App\Models\MenuItem::for('header')->map->toNav()->all() ?: [
+        ['url' => lroute('about'), 'label' => __('site.nav.about'), 'mega' => null, 'active' => ['about'], 'new_tab' => false, 'current' => false],
+        ['url' => lroute('mission'), 'label' => __('site.nav.mission'), 'mega' => null, 'active' => ['mission'], 'new_tab' => false, 'current' => false],
+        ['url' => lroute('what-we-do'), 'label' => __('site.nav.what_we_do'), 'mega' => 'domains', 'active' => ['what-we-do', 'domain'], 'new_tab' => false, 'current' => false],
+        ['url' => lroute('get-involved'), 'label' => __('site.nav.get_involved'), 'mega' => 'involved', 'active' => ['get-involved', 'invest', 'project', 'submit'], 'new_tab' => false, 'current' => false],
+        ['url' => lroute('partners'), 'label' => __('site.nav.partners'), 'mega' => null, 'active' => ['partners'], 'new_tab' => false, 'current' => false],
+        ['url' => lroute('contact'), 'label' => __('site.nav.contact'), 'mega' => null, 'active' => ['contact'], 'new_tab' => false, 'current' => false],
     ];
 @endphp
 {{-- Fixed header, lighter on scroll, always reachable (§3.2) --}}
@@ -25,9 +26,9 @@
         <nav class="hidden h-full lg:block" aria-label="{{ __('site.a11y.main_nav') }}">
             <ul class="flex h-full items-stretch gap-5 xl:gap-8">
                 @foreach ($nav as $item)
-                    @php($isActive = is_page(...($item['active'] ?? [$item['page']])))
+                    @php($isActive = $item['current'] || ($item['active'] && is_page(...$item['active'])))
                     <li class="flex">
-                        @if (isset($item['mega']))
+                        @if ($item['mega'])
                             <button type="button" class="nav-link gap-1" x-on:click="toggleMega('{{ $item['mega'] }}')"
                                     :aria-expanded="megaOpen === '{{ $item['mega'] }}'" aria-controls="mega-{{ $item['mega'] }}"
                                     @if($isActive) aria-current="page" @endif>
@@ -35,7 +36,7 @@
                                 <x-glyph name="chevron-down" :size="16" class="transition-transform duration-300" x-bind:class="megaOpen === '{{ $item['mega'] }}' && 'rotate-180'" />
                             </button>
                         @else
-                            <a href="{{ lroute($item['page']) }}" class="nav-link" @if($isActive) aria-current="page" @endif>{{ $item['label'] }}</a>
+                            <a href="{{ $item['url'] }}" class="nav-link" @if($isActive) aria-current="page" @endif @if($item['new_tab']) target="_blank" rel="noopener" @endif>{{ $item['label'] }}</a>
                         @endif
                     </li>
                 @endforeach
@@ -133,13 +134,13 @@
                 <li><a href="{{ lroute('home') }}" class="flex min-h-14 items-center font-display text-lg font-bold">{{ __('site.nav.home') }}</a></li>
                 @foreach ($nav as $item)
                     <li x-data="{ open: false }">
-                        @if (isset($item['mega']))
+                        @if ($item['mega'])
                             <button type="button" x-on:click="open = !open" :aria-expanded="open" class="flex min-h-14 w-full items-center justify-between font-display text-lg font-bold">
                                 {{ $item['label'] }}
                                 <x-glyph name="chevron-down" :size="22" class="transition-transform" x-bind:class="open && 'rotate-180'" />
                             </button>
                             <ul x-show="open" x-collapse class="pb-4">
-                                <li><a href="{{ lroute($item['page']) }}" class="flex min-h-11 items-center font-semibold text-brand-green-deep">{{ $item['mega'] === 'domains' ? __('site.mega.domains_all') : __('site.mega.involved_all') }}</a></li>
+                                <li><a href="{{ $item['url'] }}" class="flex min-h-11 items-center font-semibold text-brand-green-deep">{{ $item['mega'] === 'domains' ? __('site.mega.domains_all') : __('site.mega.involved_all') }}</a></li>
                                 @if ($item['mega'] === 'domains')
                                     @foreach ($navDomains as $domain)
                                         <li><a href="{{ $domain->url() }}" class="flex min-h-11 items-start gap-3 py-2 text-base"><span class="font-mono text-xs text-ink-400 pt-1">{{ $domain->numberLabel() }}</span>{{ $domain->tr('title') }}</a></li>
@@ -150,7 +151,7 @@
                                 @endif
                             </ul>
                         @else
-                            <a href="{{ lroute($item['page']) }}" class="flex min-h-14 items-center font-display text-lg font-bold">{{ $item['label'] }}</a>
+                            <a href="{{ $item['url'] }}" class="flex min-h-14 items-center font-display text-lg font-bold" @if($item['new_tab']) target="_blank" rel="noopener" @endif>{{ $item['label'] }}</a>
                         @endif
                     </li>
                 @endforeach

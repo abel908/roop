@@ -24,7 +24,7 @@
             </video>
             <div class="absolute inset-0 -z-10 bg-gradient-to-r from-ink via-ink/80 to-ink/20"></div>
         @elseif ($heroPoster)
-            <img src="{{ asset('storage/'.$heroPoster) }}" alt="" class="absolute inset-0 -z-10 size-full object-cover opacity-55" fetchpriority="high">
+            <x-picture :src="$heroPoster" eager class="absolute inset-0 -z-10" img-class="size-full object-cover opacity-55" />
             <div class="absolute inset-0 -z-10 bg-gradient-to-r from-ink via-ink/80 to-ink/20"></div>
         @else
             <x-rays class="absolute -right-[32rem] -bottom-[32rem] -z-10 size-[64rem] opacity-90 lg:-right-[45rem] lg:-bottom-[45rem] lg:size-[90rem]" :count="30" :from="180" :to="270" :fill="0.52" />
@@ -251,6 +251,11 @@
                         <x-stat dark :value="$figure['value'] ?? 0" :suffix="$figure['suffix'] ?? ''" :label="data_get($figure, 'label.'.$currentLocale) ?: data_get($figure, 'label.en')" style="--reveal-delay: {{ $i * 80 }}ms" />
                     @endforeach
                 </div>
+            </div>
+        @endif
+        @if (data_get($settings, 'impact.stories'))
+            <div class="container-site relative pb-20 lg:pb-28">
+                @include('partials.stories', ['dark' => true])
             </div>
         @endif
     </section>

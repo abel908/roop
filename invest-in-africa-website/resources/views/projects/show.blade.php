@@ -18,7 +18,7 @@
         {{-- Header --}}
         <header class="on-dark grain relative overflow-hidden bg-ink text-paper">
             @if ($project->coverUrl())
-                <img src="{{ $project->coverUrl() }}" alt="" class="absolute inset-0 size-full object-cover opacity-45" fetchpriority="high">
+                <x-picture :src="$project->cover_image" eager class="absolute inset-0" img-class="size-full object-cover opacity-45" />
                 <div class="absolute inset-0 bg-gradient-to-r from-ink via-ink/85 to-ink/30"></div>
             @else
                 <x-rays class="absolute -right-[30rem] -bottom-[36rem] size-[66rem] opacity-35" :count="24" />
@@ -84,7 +84,7 @@
                         <h2 id="gallery-title" class="text-h3">{{ __('projects.sheet.gallery') }}</h2>
                         <ul class="mt-5 grid grid-cols-2 gap-3 md:grid-cols-3">
                             @foreach ($gallery as $image)
-                                <li class="aspect-[4/3] overflow-hidden bg-ink-100"><img src="{{ $image }}" alt="" loading="lazy" class="size-full object-cover"></li>
+                                <li class="aspect-[4/3] overflow-hidden bg-ink-100"><x-picture :src="$image" :alt="$project->tr('title')" sizes="(min-width: 768px) 20vw, 50vw" class="block size-full" img-class="size-full object-cover" /></li>
                             @endforeach
                         </ul>
                     </section>
@@ -137,7 +137,7 @@
                             <form method="POST" action="{{ lroute('interest.store', ['project' => $project->slugKey()]) }}" class="relative mt-8 space-y-5" novalidate
                                   x-data="validatedForm(@js(__('forms.js')))" x-on:submit="submit($event)">
                                 @csrf
-                                <x-form.antispam />
+                                <x-form.antispam bag="interest" />
                                 @if ($hasInterestErrors)
                                     <x-alert type="error">{{ __('forms.errors_title') }}</x-alert>
                                 @endif

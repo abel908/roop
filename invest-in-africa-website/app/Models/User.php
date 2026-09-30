@@ -23,6 +23,9 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
     /** @use HasFactory<UserFactory> */
     use HasFactory, InteractsWithAppAuthentication, InteractsWithAppAuthenticationRecovery, Notifiable;
 
+    /** Same defaults as the database columns, also for models not yet reloaded. */
+    protected $attributes = ['role' => 'editor', 'locale' => 'fr', 'is_active' => true];
+
     protected function casts(): array
     {
         return [
@@ -36,12 +39,12 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->is_active;
+        return (bool) $this->is_active;
     }
 
     public function canManage(string $module): bool
     {
-        return $this->is_active && $this->role?->canManage($module);
+        return (bool) $this->is_active && (bool) $this->role?->canManage($module);
     }
 
     public function isSuperAdmin(): bool

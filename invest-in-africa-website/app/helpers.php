@@ -51,3 +51,20 @@ if (! function_exists('is_page')) {
         return false;
     }
 }
+
+if (! function_exists('tv')) {
+    /**
+     * Value of a translatable array {"en": …, "fr": …, "zh": …} in the current
+     * language, falling back to English (used for block contents).
+     */
+    function tv(mixed $value, ?string $locale = null): mixed
+    {
+        if (! is_array($value)) {
+            return $value;
+        }
+
+        $locale ??= Locales::current();
+
+        return filled($value[$locale] ?? null) ? $value[$locale] : ($value[config('site.default_locale')] ?? null);
+    }
+}

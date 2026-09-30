@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasRevisions;
 use App\Support\DatabaseTranslationLoader;
 use App\Support\Locales;
 use Illuminate\Database\Eloquent\Model;
@@ -18,6 +19,8 @@ use Illuminate\Translation\FileLoader;
  */
 class ContentTranslation extends Model
 {
+    use HasRevisions;
+
     protected $fillable = ['group', 'key', 'en', 'fr', 'zh', 'updated_by'];
 
     protected static function booted(): void

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\Captcha;
 use Closure;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
@@ -12,7 +13,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * China-compatible anti-spam, without reCAPTCHA (§6.3, §7.6, §11.1):
- * invisible honeypot field + minimum filling time.
+ * invisible honeypot field, minimum filling time and, when the traffic is
+ * suspicious, a self-hosted captcha question.
  */
 class ProtectAgainstSpam
 {
@@ -21,12 +23,24 @@ class ProtectAgainstSpam
         $honeypot = config('site.antispam.honeypot_field');
 
         if (filled($request->input($honeypot)) || $this->filledTooFast($request->input('_started'))) {
-            Log::channel('stack')->warning('Spam attempt blocked', ['ip' => $request->ip(), 'path' => $request->path()]);
+            Log::warning('Spam attempt blocked', ['ip' => $request->ip(), 'path' => $request->path()]);
+            Captcha::requireFor($request);
 
             throw ValidationException::withMessages(['form' => __('forms.spam_detected')]);
         }
 
-        return $next($request);
+        if (Captcha::required($request) && ! Captcha::verify($request)) {
+            throw ValidationException::withMessages(['captcha' => __('forms.captcha.error')]);
+        }
+
+        $response = $next($request);
+
+        // Only successful submissions (redirect to the confirmation page) count.
+        if ($response->isRedirection() && ! $request->session()->has('errors')) {
+            Captcha::recordSubmission($request);
+        }
+
+        return $response;
     }
 
     private function filledTooFast(?string $token): bool

@@ -6,6 +6,7 @@ use App\Enums\FundingType;
 use App\Enums\ProjectStage;
 use App\Enums\ProjectStatus;
 use App\Models\Domain;
+use App\Models\Page;
 use App\Models\Project;
 use App\Models\Sector;
 use Illuminate\Database\Seeder;
@@ -140,5 +141,44 @@ class DemoSeeder extends Seeder
                 'published_at' => now()->subDays((int) substr($data['reference'], -1)),
             ]);
         }
+
+        $this->demoPage();
+    }
+
+    /** A page composed of blocks, to demonstrate the block editor (§8.1). */
+    private function demoPage(): void
+    {
+        $t = fn (string $en, string $fr, string $zh) => compact('en', 'fr', 'zh');
+
+        Page::query()->updateOrCreate(['id' => 1], [
+            'title' => $t('[Demo] Diaspora investment guide', '[Démo] Guide d’investissement de la diaspora', '[示例] 侨民投资指南'),
+            'slug' => $t('diaspora-investment-guide', 'guide-investissement-diaspora', 'diaspora-investment-guide'),
+            'status' => Page::STATUS_PUBLISHED,
+            'blocks' => [
+                ['type' => 'hero', 'data' => [
+                    'eyebrow' => $t('Demonstration page', 'Page de démonstration', '示例页面'),
+                    'title' => $t('Investing from abroad, step by step', 'Investir depuis l’étranger, étape par étape', '身在海外，逐步投资'),
+                    'lead' => $t('This page was composed in the back-office from validated blocks.', 'Cette page a été composée dans le back-office à partir de blocs validés.', '本页面由后台通过标准模块组合而成。'),
+                    'dark' => true, 'show_ctas' => true,
+                ]],
+                ['type' => 'cards', 'data' => [
+                    'heading' => $t('Three steps', 'Trois étapes', '三个步骤'),
+                    'items' => [
+                        ['icon' => 'users', 'title' => $t('Your profile', 'Votre profil', '您的情况'), 'text' => $t('Tell us about your objectives.', 'Parlez-nous de vos objectifs.', '介绍您的投资目标。')],
+                        ['icon' => 'target', 'title' => $t('Orientation', 'Orientation', '投资引导'), 'text' => $t('We guide you to suitable opportunities.', 'Nous vous orientons vers des opportunités adaptées.', '我们为您推荐合适的机会。')],
+                        ['icon' => 'handshake', 'title' => $t('Introduction', 'Mise en relation', '对接'), 'text' => $t('Meet vetted partners and projects.', 'Rencontrez des partenaires et projets vérifiés.', '对接经过审核的伙伴与项目。')],
+                    ],
+                ]],
+                ['type' => 'quote', 'data' => [
+                    'text' => $t('Demonstration quote — to be replaced by an institutional testimony.', 'Citation de démonstration — à remplacer par un témoignage institutionnel.', '示例引言——待替换为正式证言。'),
+                ]],
+                ['type' => 'faq', 'data' => [
+                    'heading' => $t('Questions', 'Questions', '常见问题'),
+                    'items' => [['q' => $t('Is this page real?', 'Cette page est-elle réelle ?', '这是正式页面吗？'), 'a' => $t('No, it only illustrates the block editor.', 'Non, elle illustre uniquement l’éditeur par blocs.', '不是，仅用于展示模块编辑器。')]],
+                ]],
+                ['type' => 'projects', 'data' => ['heading' => $t('Opportunities', 'Opportunités', '投资机会'), 'limit' => 3]],
+                ['type' => 'cta', 'data' => ['title' => $t('Let’s talk', 'Parlons-en', '欢迎沟通'), 'show_ctas' => true]],
+            ],
+        ]);
     }
 }

@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Submissions\Pages;
 use App\Enums\SubmissionStatus;
 use App\Filament\Resources\Projects\ProjectResource;
 use App\Filament\Resources\Submissions\SubmissionResource;
+use App\Filament\Support\AnonymiseAction;
 use App\Models\ActivityLog;
 use App\Models\Project;
 use App\Models\Submission;
@@ -68,6 +69,7 @@ class ViewSubmission extends ViewRecord
                 ->color('gray')
                 ->visible(fn (Submission $record) => $record->project()->exists())
                 ->url(fn (Submission $record) => ProjectResource::getUrl('edit', ['record' => $record->project])),
+            AnonymiseAction::make(),
             EditAction::make()->label(__('admin.actions.process')),
         ];
     }

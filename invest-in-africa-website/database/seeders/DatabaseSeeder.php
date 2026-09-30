@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             DomainSeeder::class,
             SectorSeeder::class,
             SettingSeeder::class,
+            MenuSeeder::class,
         ]);
 
         // First Super Admin — credentials from the environment, never hard-coded.

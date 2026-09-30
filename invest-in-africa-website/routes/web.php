@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\DocumentDownloadController;
+use App\Http\Controllers\CmsPageController;
 use App\Http\Controllers\ConfirmationController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DomainController;
@@ -22,6 +23,12 @@ Route::get('/', RootController::class)->name('root');
 Route::get('sitemap.xml', [SeoController::class, 'sitemapIndex'])->name('sitemap');
 Route::get('sitemap-{locale}.xml', [SeoController::class, 'sitemap'])->whereIn('locale', Locales::codes())->name('sitemap.locale');
 Route::get('robots.txt', [SeoController::class, 'robots'])->name('robots');
+
+// Preview of a draft page from the back-office (§8.1).
+Route::get('preview/pages/{page}/{locale}', [CmsPageController::class, 'preview'])
+    ->whereIn('locale', Locales::codes())
+    ->middleware(['auth', 'signed'])
+    ->name('pages.preview');
 
 Route::get('admin/documents/{document}', DocumentDownloadController::class)
     ->middleware(['auth', 'signed'])
@@ -72,5 +79,8 @@ foreach (Locales::codes() as $locale) {
             Route::get($slug('privacy'), [PageController::class, 'legal'])->name('privacy')->defaults('page', 'privacy');
             Route::get($slug('cookies'), [PageController::class, 'legal'])->name('cookies')->defaults('page', 'cookies');
             Route::get($slug('terms'), [PageController::class, 'legal'])->name('terms')->defaults('page', 'terms');
+
+            // Pages created in the back-office — registered last so fixed sections take precedence.
+            Route::get('{page}', [CmsPageController::class, 'show'])->where('page', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('page');
         });
 }

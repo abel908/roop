@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Partners\Pages;
 
 use App\Filament\Resources\Partners\PartnerResource;
+use App\Filament\Support\RevisionHistoryAction;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
@@ -13,6 +14,7 @@ class EditPartner extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            RevisionHistoryAction::make(),
             DeleteAction::make(),
         ];
     }

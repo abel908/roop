@@ -13,6 +13,12 @@ return [
     'consent' => '我同意 The Invest In Africa Initiative 根据:policy处理我的数据，以回复我的咨询。',
     'consent_policy' => '隐私政策',
 
+    'captcha' => [
+        'question' => ':a 加 :b 等于多少？',
+        'help' => '安全验证：请输入数字答案。',
+        'error' => '安全验证答案不正确，请重试。',
+    ],
+
     'attributes' => [
         'full_name' => '姓名',
         'organization' => '机构',

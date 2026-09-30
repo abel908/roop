@@ -3,9 +3,11 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Support\Translatable;
+use App\Support\Countries;
 use BackedEnum;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -57,6 +59,20 @@ class InstitutionalContent extends SettingsPage
                         TextInput::make('value')->label(__('admin.fields.value'))->numeric()->required(),
                         TextInput::make('suffix')->label(__('admin.fields.suffix'))->maxLength(6)->placeholder('+, %, M'),
                         Translatable::text('label', __('admin.fields.label'), required: true)->columnSpanFull(),
+                    ])->columns(2),
+            ]),
+            Section::make(__('admin.sections.stories'))->description(__('admin.help.stories'))->collapsible()->schema([
+                Repeater::make('impact.stories')->hiddenLabel()->reorderable()->collapsible()->maxItems(9)
+                    ->itemLabel(fn (array $state) => $state['title']['en'] ?? null)
+                    ->schema([
+                        Select::make('country')->label(__('admin.fields.country'))
+                            ->options(fn () => Countries::african())->searchable(),
+                        FileUpload::make('image')->label(__('admin.blocks.image'))->image()->imageEditor()
+                            ->imageAspectRatio('4:3')->disk('public')->directory('stories')->maxSize(4096),
+                        Translatable::text('title', __('admin.fields.title'), required: true),
+                        Translatable::textarea('text', __('admin.fields.description'), rows: 3),
+                        Translatable::text('quote', __('admin.blocks.quote')),
+                        Translatable::text('author', __('admin.blocks.author')),
                     ])->columns(2),
             ]),
             Section::make(__('admin.sections.timeline'))->description(__('admin.help.timeline'))->collapsible()->schema([

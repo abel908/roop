@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Services\DataRetention;
 use BackedEnum;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TagsInput;
@@ -26,7 +27,7 @@ class SiteSettings extends SettingsPage
 
     protected function settingKeys(): array
     {
-        return ['contact', 'socials', 'notifications', 'hero'];
+        return ['contact', 'socials', 'notifications', 'hero', 'retention'];
     }
 
     public static function getNavigationGroup(): string|UnitEnum|null
@@ -75,6 +76,11 @@ class SiteSettings extends SettingsPage
                 $emails('contact_press', __('admin.messages').' — '.__('enums.contact_subject.press')),
                 $emails('contact_other', __('admin.messages').' — '.__('enums.contact_subject.other')),
             ]),
+            Section::make(__('admin.sections.retention'))->description(__('admin.help.retention'))->columns(4)->schema(
+                collect(DataRetention::DEFAULTS)->map(fn ($default, $type) => TextInput::make("retention.$type")
+                    ->label(__("admin.retention.$type"))->numeric()->minValue(1)->maxValue(120)->suffix(__('admin.retention.months'))->placeholder((string) $default)
+                )->values()->all()
+            ),
             Section::make(__('admin.sections.hero'))->description(__('admin.help.hero'))->columns(2)->schema([
                 FileUpload::make('hero.video')->label(__('admin.fields.hero_video'))
                     ->acceptedFileTypes(['video/mp4'])->disk('public')->directory('hero')->maxSize(20480),

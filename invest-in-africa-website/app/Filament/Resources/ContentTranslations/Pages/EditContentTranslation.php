@@ -3,10 +3,16 @@
 namespace App\Filament\Resources\ContentTranslations\Pages;
 
 use App\Filament\Resources\ContentTranslations\ContentTranslationResource;
+use App\Filament\Support\RevisionHistoryAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditContentTranslation extends EditRecord
 {
+    protected function getHeaderActions(): array
+    {
+        return [RevisionHistoryAction::make()];
+    }
+
     protected static string $resource = ContentTranslationResource::class;
 
     protected function mutateFormDataBeforeSave(array $data): array

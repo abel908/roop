@@ -13,6 +13,12 @@ return [
     'consent' => 'I agree that my data will be processed by The Invest In Africa Initiative to handle my request, in accordance with the :policy.',
     'consent_policy' => 'Privacy Policy',
 
+    'captcha' => [
+        'question' => 'How much is :a + :b?',
+        'help' => 'Security question: please answer with a number.',
+        'error' => 'Incorrect answer to the security question. Please try again.',
+    ],
+
     'attributes' => [
         'full_name' => 'full name',
         'organization' => 'organization',

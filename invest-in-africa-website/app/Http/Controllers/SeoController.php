@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Domain;
+use App\Models\Page;
 use App\Models\Project;
 use App\Support\Locales;
 use Illuminate\Http\Response;
@@ -43,6 +44,15 @@ class SeoController
                 'alternates' => $this->alternates(fn ($l) => $domain->url($l)),
                 'priority' => '0.8',
                 'lastmod' => $domain->updated_at,
+            ];
+        }
+
+        foreach (Page::query()->live()->get() as $page) {
+            $entries[] = [
+                'loc' => $page->url($locale),
+                'alternates' => $this->alternates(fn ($l) => $page->url($l)),
+                'priority' => '0.6',
+                'lastmod' => $page->updated_at,
             ];
         }
 

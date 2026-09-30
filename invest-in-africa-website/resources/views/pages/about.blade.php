@@ -110,6 +110,7 @@
                         <x-stat :value="$figure['value'] ?? 0" :suffix="$figure['suffix'] ?? ''" :label="data_get($figure, 'label.'.$currentLocale) ?: data_get($figure, 'label.en')" />
                     @endforeach
                 </div>
+                @include('partials.stories', ['class' => 'mt-16'])
             </div>
         </section>
     @endif
@@ -124,7 +125,7 @@
                         <li class="reveal">
                             <div class="aspect-[4/5] overflow-hidden bg-ink-100">
                                 @if (! empty($leader['photo']))
-                                    <img src="{{ asset('storage/'.$leader['photo']) }}" alt="{{ $leader['name'] ?? '' }}" loading="lazy" class="size-full object-cover grayscale-0">
+                                    <x-picture :src="$leader['photo']" :alt="$leader['name'] ?? ''" sizes="(min-width: 1024px) 25vw, 50vw" class="block size-full" img-class="size-full object-cover" />
                                 @endif
                             </div>
                             <h3 class="text-h3 mt-5">{{ $leader['name'] ?? '' }}</h3>

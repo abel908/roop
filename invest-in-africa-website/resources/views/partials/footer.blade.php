@@ -24,8 +24,9 @@
             <nav class="lg:col-span-3" aria-labelledby="footer-institution">
                 <h2 id="footer-institution" class="text-label text-brand-gold">{{ __('site.footer.institution') }}</h2>
                 <ul class="mt-5 space-y-1 text-[0.9375rem]">
-                    @foreach (['about', 'mission', 'partners', 'contact'] as $page)
-                        <li><a href="{{ lroute($page) }}" class="inline-flex min-h-10 items-center text-ink-200 hover:text-paper hover:underline underline-offset-4">{{ __('site.nav.'.str_replace('-', '_', $page)) }}</a></li>
+                    @php($footerNav = \App\Models\MenuItem::for('footer')->map->toNav()->all() ?: collect(['about', 'mission', 'partners', 'contact'])->map(fn ($p) => ['url' => lroute($p), 'label' => __('site.nav.'.$p), 'new_tab' => false])->all())
+                    @foreach ($footerNav as $item)
+                        <li><a href="{{ $item['url'] }}" @if($item['new_tab']) target="_blank" rel="noopener" @endif class="inline-flex min-h-10 items-center text-ink-200 hover:text-paper hover:underline underline-offset-4">{{ $item['label'] }}</a></li>
                     @endforeach
                 </ul>
             </nav>

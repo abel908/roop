@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasRevisions;
 use App\Models\Concerns\HasTranslations;
+use App\Models\Concerns\OptimizesImages;
 use App\Support\Locales;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -14,9 +16,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Domain extends Model
 {
-    use HasTranslations;
+    use HasRevisions, HasTranslations, OptimizesImages;
 
     protected array $translatable = ['slug', 'title', 'tagline', 'audience', 'intro', 'challenges', 'services', 'benefits', 'steps'];
+
+    protected array $optimizedImages = ['cover_image'];
 
     protected $fillable = [
         'number', 'icon', 'slug', 'title', 'tagline', 'audience', 'intro', 'challenges',

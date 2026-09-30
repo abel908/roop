@@ -2,8 +2,10 @@
 
 namespace App\Filament\Pages;
 
+use App\Jobs\OptimizeImage;
 use App\Models\ActivityLog;
 use App\Models\Setting;
+use App\Services\ImageOptimizer;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -11,6 +13,7 @@ use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Base for back-office pages editing groups of settings stored in the
@@ -68,6 +71,14 @@ abstract class SettingsPage extends Page
         foreach ($this->settingKeys() as $key) {
             Setting::put($key, $data[$key] ?? []);
         }
+
+        // AVIF / WebP variants for images uploaded here (hero poster, portraits…).
+        array_walk_recursive($data, function ($value) {
+            if (is_string($value) && ImageOptimizer::supports($value) && ! ImageOptimizer::manifest($value)
+                && Storage::disk('public')->exists($value)) {
+                OptimizeImage::dispatch($value);
+            }
+        });
 
         ActivityLog::record('settings.updated', null, ['keys' => implode(', ', $this->settingKeys())]);
 

@@ -73,6 +73,7 @@
                     @endforeach
                 </div>
             @endif
+            @include('partials.stories', ['dark' => true, 'class' => 'mt-16'])
         </div>
     </section>
 

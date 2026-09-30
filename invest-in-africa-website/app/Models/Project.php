@@ -7,7 +7,9 @@ use App\Enums\ProjectStage;
 use App\Enums\ProjectStatus;
 use App\Enums\Region;
 use App\Models\Concerns\HasReference;
+use App\Models\Concerns\HasRevisions;
 use App\Models\Concerns\HasTranslations;
+use App\Models\Concerns\OptimizesImages;
 use App\Support\Countries;
 use App\Support\Locales;
 use App\Support\Money;
@@ -22,9 +24,11 @@ use Illuminate\Support\Facades\Storage;
  */
 class Project extends Model
 {
-    use HasReference, HasTranslations;
+    use HasReference, HasRevisions, HasTranslations, OptimizesImages;
 
     protected array $translatable = ['title', 'summary', 'description', 'use_of_funds', 'impact', 'timeline'];
+
+    protected array $optimizedImages = ['cover_image', 'gallery'];
 
     protected $fillable = [
         'reference', 'title', 'summary', 'description', 'use_of_funds', 'impact', 'timeline',

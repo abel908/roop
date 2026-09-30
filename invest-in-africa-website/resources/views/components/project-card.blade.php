@@ -10,8 +10,8 @@
 <article {{ $attributes->merge(['class' => 'card card-hover group']) }}>
     <div class="relative aspect-[16/10] overflow-hidden bg-ink">
         @if ($project->coverUrl())
-            <img src="{{ $project->coverUrl() }}" alt="" loading="lazy" decoding="async"
-                 class="size-full object-cover transition duration-700 ease-out group-hover:scale-[1.03]" width="640" height="400">
+            <x-picture :src="$project->cover_image" sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                       class="block size-full" img-class="size-full object-cover transition duration-700 ease-out group-hover:scale-[1.03]" />
         @else
             {{-- Placeholder until visuals are supplied: sector pictogram on the brand motif --}}
             <div class="grain absolute inset-0 flex items-center justify-center overflow-hidden">

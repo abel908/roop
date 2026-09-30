@@ -13,6 +13,12 @@ return [
     'consent' => 'J’accepte que mes données soient traitées par The Invest In Africa Initiative pour répondre à ma demande, conformément à la :policy.',
     'consent_policy' => 'politique de confidentialité',
 
+    'captcha' => [
+        'question' => 'Combien font :a + :b ?',
+        'help' => 'Question de sécurité : répondez par un nombre.',
+        'error' => 'Réponse incorrecte à la question de sécurité. Merci de réessayer.',
+    ],
+
     'attributes' => [
         'full_name' => 'nom complet',
         'organization' => 'organisation',
